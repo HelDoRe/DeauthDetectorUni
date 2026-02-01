@@ -1,32 +1,24 @@
 // This software is licensed under the MIT License.
 // See the license file for details.
-// For more details visit github.com/spacehuhn/DeauthDetector
+// For more details visit github.com/HelDoRe/DeauthDetectorUni
 
-const char Title[] = "DeauthDetector";
-const char VersionLong[] = "v0.0.2 (20260201)";
-const char VersionShort[] = "v0.0.2";
-#define D_ROTATION 1
-#define DEBUG_LOG 1
-short tbx, tby;
-unsigned short tbw, tbh;
-int x, y;
-#define MY_NTP_SERVER "at.pool.ntp.org"
-#define MY_TZ "CET-1CEST,M3.5.0/02,M10.5.0/03"
-// include necessary libraries
-const char ssid[] = "";
-const char password[] = "";
-
-#define ENABLE_GxEPD2_GFX 0
-
+//include necessary libraries
 //#include <Arduino.h>
 #include <GxEPD2_BW.h>
 #include <GxEPD2_3C.h>
-#include <Fonts/FreeMonoBold9pt7b.h>
-#include "fonts/Outfit_80036pt7b.h"
 #include <ESP8266WiFi.h>
 #include <time.h>
+#include <Fonts/FreeMonoBold9pt7b.h>
+#include "fonts/Outfit_80036pt7b.h"
+#include "fonts/Outfit_60011pt7b.h"
 #include "song.h"
+#include "conf.h"
 
+
+short tbx, tby;
+unsigned short tbw, tbh;
+int x, y;
+#define ENABLE_GxEPD2_GFX 0
 
 // ESP8266 CS(SS)=15,SCL(SCK)=14,SDA(MOSI)=13,BUSY=16,RES(RST)=5,DC=4
 #define CS_PIN (15)
@@ -35,17 +27,18 @@ const char password[] = "";
 #define DC_PIN (4)
 #define GxEPD2_DISPLAY_CLASS GxEPD2_BW
 #define GxEPD2_DRIVER_CLASS GxEPD2_154_D67
+#define SCREEN_WIDTH 200 // OLED display width, in pixels
+#define SCREEN_HEIGHT 200 // OLED display height, in pixels
 // 1.54'' EPD Module
-
-
 //GxEPD2_BW<GxEPD2_154_D67, GxEPD2_154_D67::HEIGHT> display(GxEPD2_154_D67(/*CS=5*/ CS_PIN, /*DC=*/ DC_PIN, /*RES=*/ RES_PIN, /*BUSY=*/ BUSY_PIN)); // GDEH0154D67 200x200, SSD1681
-
 GxEPD2_DISPLAY_CLASS<GxEPD2_DRIVER_CLASS, GxEPD2_DRIVER_CLASS::HEIGHT> display(GxEPD2_DRIVER_CLASS(/*CS=*/CS_PIN, /*DC=*/DC_PIN, /*RES=*/RES_PIN, /*BUSY=*/BUSY_PIN));
 // include ESP8266 Non-OS SDK functions
-/* extern "C" {
+
+
+extern "C" {
 #include "user_interface.h"
 }
-*/
+
 
 
 // ===== SETTINGS ===== //
@@ -54,14 +47,9 @@ GxEPD2_DISPLAY_CLASS<GxEPD2_DRIVER_CLASS, GxEPD2_DRIVER_CLASS::HEIGHT> display(G
 
 #define LED_INVERT true    /* Invert HIGH/LOW for LED */
 #define LED_E_INVERT false    /* Invert HIGH/LOW for LED */
-#define SERIAL_BAUD 115200 /* Baudrate for serial communication */
 #define CH_TIME 140        /* Scan time (in ms) per channel */
 #define PKT_RATE 5         /* Min. packets before it gets recognized as an attack */
 #define PKT_TIME 1         /* Min. interval (CH_TIME*CH_RANGE) before it gets recognized as an attack */
-
-
-#define SCREEN_WIDTH 200 // OLED display width, in pixels
-#define SCREEN_HEIGHT 200 // OLED display height, in pixels
 
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
 // The pins for I2C are defined by the Wire-library. 
@@ -140,6 +128,7 @@ void display_string(String input){
 /*  zrobic refresh tylko wtedy jak cos sie zmienilo. */
 if (packet_rate != old_packet_rate || packets_count != old_packets_count || total_attack_counter != old_total_attack_counter)
 {
+      display.setFont(&SMALL_FONT);
     display.setPartialWindow(100, 150, 100, 50);
       display.firstPage();
       do
@@ -160,14 +149,15 @@ if (packet_rate != old_packet_rate || packets_count != old_packets_count || tota
 
 if (input != old_input)
 {
-    display.setPartialWindow(0, 38, 200, 15);
+    display.setFont(&BASE_FONT);
+    display.setPartialWindow(0, 39, 200, 15);
       display.firstPage();
       do
       {
         display.setTextSize(1);
         display.getTextBounds(input.c_str(), 0, 0, &tbx, &tby, &tbw, &tbh);
         x = ((display.width() - tbw) / 2) - tbx;
-        display.setCursor(x, 53);
+        display.setCursor(x, 54);
         display.print(input);
       }
       while (display.nextPage());
@@ -175,6 +165,7 @@ if (input != old_input)
 
 if (msg != old_msg)
 {
+    display.setFont(&BASE_FONT);
     display.setPartialWindow(0, 0, 200, 35);
       display.firstPage();
       do
@@ -205,7 +196,7 @@ if (curHour != old_hour || curMinute != old_minute)
 {
     display.setPartialWindow(0, 65, 200, 55);
       display.firstPage();
-      display.setFont(&Outfit_80036pt7b);
+      display.setFont(&BIG_FONT);
       display.setTextSize(1);
       sprintf(timeBuffer, "%02d:%02d", curHour, curMinute);
       Serial.println(timeBuffer);
@@ -218,7 +209,7 @@ if (curHour != old_hour || curMinute != old_minute)
       }
       while (display.nextPage());
 }
-display.setFont(&FreeMonoBold9pt7b);
+display.setFont(&BASE_FONT);
 if (curDay != old_day || curMonth != old_month)
 {
     display.setPartialWindow(0, 120, 200, 15);
@@ -322,7 +313,7 @@ void setup() {
 //ePaper
   display.init(115200,true,50,false);
   display.setRotation(D_ROTATION);
-  display.setFont(&FreeMonoBold9pt7b);
+  display.setFont(&BASE_FONT);
   display.setTextColor(GxEPD_BLACK);
 
   display.getTextBounds(Title, 0, 0, &tbx, &tby, &tbw, &tbh);
@@ -401,6 +392,8 @@ void setup() {
   ////display.setTextColor(WHITE);
     time(&now);
     localtime_r(&now, &local_tm);
+    display.setFont(&SMALL_FONT);
+
     display.setPartialWindow(0, 0, 200, 200);
       display.firstPage();
       do
@@ -417,6 +410,7 @@ void setup() {
         display.setCursor(x, 195);
         display.print(VersionShort);
         */
+      display.setFont(&BASE_FONT);
         display.setTextSize(1);
         display.getTextBounds(scanning_lng.c_str(), 0, 0, &tbx, &tby, &tbw, &tbh);
         x = ((display.width() - tbw) / 2) - tbx;
@@ -438,7 +432,7 @@ void setup() {
 */
       }
       while (display.nextPage());
-  display.setFont(&FreeMonoBold9pt7b);
+  display.setFont(&BASE_FONT);
   display.hibernate();
   Serial.println("Started \\o/");
 }

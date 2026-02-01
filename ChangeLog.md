@@ -4,10 +4,11 @@ ADD:
  * display date
  * break loop WiFi and NTP when fail
  * song in external *.h file
+ * add another font
  
 -=# v0.0.1 (20260131) #=- 
 ADD: 
- * fonts from https://github.com/z88kat/lilygo-paper-watch/
+ * font from https://github.com/z88kat/lilygo-paper-watch/
  * NTP time sync from https://werner.rothschopf.net/microcontroller/202103_arduino_esp32_ntp_en.htm
  * display time
  
