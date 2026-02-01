@@ -3,8 +3,8 @@
 // For more details visit github.com/spacehuhn/DeauthDetector
 
 const char Title[] = "DeauthDetector";
-const char VersionLong[] = "v0.0.1 (20260131)";
-const char VersionShort[] = "v0.0.1";
+const char VersionLong[] = "v0.0.2 (20260201)";
+const char VersionShort[] = "v0.0.2";
 #define D_ROTATION 1
 #define DEBUG_LOG 1
 short tbx, tby;
@@ -13,8 +13,8 @@ int x, y;
 #define MY_NTP_SERVER "at.pool.ntp.org"
 #define MY_TZ "CET-1CEST,M3.5.0/02,M10.5.0/03"
 // include necessary libraries
-const char ssid[] = "AMLIOL";
-const char password[] = "broadway234";
+const char ssid[] = "";
+const char password[] = "";
 
 #define ENABLE_GxEPD2_GFX 0
 
@@ -299,7 +299,7 @@ if (input != old_input)
         display.setTextSize(1);
         display.getTextBounds(input.c_str(), 0, 0, &tbx, &tby, &tbw, &tbh);
         x = ((display.width() - tbw) / 2) - tbx;
-        display.setCursor(30, 53);
+        display.setCursor(x, 53);
         display.print(input);
       }
       while (display.nextPage());
@@ -312,6 +312,8 @@ if (msg != old_msg)
       do
       {
         display.setTextSize(2);
+        display.getTextBounds(msg.c_str(), 0, 0, &tbx, &tby, &tbw, &tbh);
+        x = ((display.width() - tbw) / 2) - tbx;
         display.setCursor(x, 30);
         display.print(msg);
       }
@@ -451,8 +453,6 @@ void setup() {
   // center the bounding box by transposition of the origin:
   x = ((display.width() - tbw) / 2) - tbx;
   y = ((display.height() - tbh) / 2) - tby;
-  x = 2;
-  y = 80;
   display.setFullWindow();
   display.firstPage();
   do
