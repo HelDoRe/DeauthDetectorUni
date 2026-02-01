@@ -1,16 +1,18 @@
--=# v0.0.2 (20260201) #=-
-ADD:
+-=# v0.0.2 (20260201) #=- 
+ADD: 
  * platformio.ini
  * display date
-
--=# v0.0.1 (20260131) #=-
-ADD:
+ * break loop WiFi and NTP when fail
+ * song in external *.h file
+ 
+-=# v0.0.1 (20260131) #=- 
+ADD: 
  * fonts from https://github.com/z88kat/lilygo-paper-watch/
  * NTP time sync from https://werner.rothschopf.net/microcontroller/202103_arduino_esp32_ntp_en.htm
  * display time
-
--=# v0.0.0 (20260104) #=-
-ADD:
+ 
+-=# v0.0.0 (20260104) #=- 
+ADD: 
  * code from https://github.com/spacehuhn/DeauthDetector
  * buzzer support
  * song from https://github.com/xitangg/-Pirates-of-the-Caribbe

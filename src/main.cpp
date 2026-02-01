@@ -370,7 +370,7 @@ void setup() {
 
   get_wifi();
   // Wait for display
-  Serial.print("Waiting for NTP sync");
+  Serial.print("Waiting for NTP");
   now = time(nullptr);
   // Loop until time is > 24h since Jan 1 1970 (1st Jan 2010 onwards)
   int break_loop = 0;
