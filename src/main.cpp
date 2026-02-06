@@ -8,6 +8,8 @@
 #include <GxEPD2_3C.h>
 #include <ESP8266WiFi.h>
 #include <time.h>
+#include <WiFiManager.h>          //https://github.com/tzapu/WiFiManager WiFi Configuration Magic
+
 #include <Fonts/FreeMonoBold9pt7b.h>
 #include "fonts/Outfit_80036pt7b.h"
 #include "fonts/Outfit_60011pt7b.h"
@@ -35,9 +37,9 @@ GxEPD2_DISPLAY_CLASS<GxEPD2_DRIVER_CLASS, GxEPD2_DRIVER_CLASS::HEIGHT> display(G
 // include ESP8266 Non-OS SDK functions
 
 
-extern "C" {
+/*extern "C" {
 #include "user_interface.h"
-}
+}*/
 
 
 
@@ -64,7 +66,7 @@ extern "C" {
 
 // Channels to scan on (US=1-11, EU=1-13, JAP=1-14)
 const short channels[] = { 1,2,3,4,5,6,7,8,9,10,11,12,13/*,14*/ };
-const String spin = "-\\|/";
+//const String spin = "-\\|/";
 const String scanning_lng = "Scanning...";
 const String attack_lng = "! Under ATTACK !";
 
@@ -82,7 +84,7 @@ bool led_ext_blink { false };
 time_t now;
 tm local_tm;
 int curHour = 0, curMinute = 0, curDay = 0, curMonth = 0, curYear = 0;
-
+WiFiManager wifiManager;
 
 bool ATTACK { false }; //
 int cc2 { 0 };                    // Another counter
@@ -283,7 +285,16 @@ void attack_stopped() {
 }
 
 
-void get_wifi()
+//flag for saving data
+///bool shouldSaveConfig = false;
+
+//callback notifying us of the need to save config
+/*void saveConfigCallback () {
+  Serial.println("Should save config");
+  shouldSaveConfig = true;
+}*/
+
+/* void get_wifi()
 {
   WiFi.begin(ssid, password);
   //等待wifi连接
@@ -305,11 +316,20 @@ void get_wifi()
   Serial.println(WiFi.localIP());
   }
 }
-
+*/
 
 // ===== Setup ===== //
 void setup() {
-  String msgt;
+String msgt;
+
+configTime(MY_TZ, MY_NTP_SERVER); 
+Serial.begin(SERIAL_BAUD); // Start serial communication
+
+WiFi.mode(WIFI_STA); // explicitly set mode, esp defaults to STA+AP
+wifiManager.setConfigPortalTimeout(180);
+//wifiManager.setSaveConfigCallback(saveConfigCallback);
+wifiManager.setDarkMode(true);
+
 //ePaper
   display.init(115200,true,50,false);
   display.setRotation(D_ROTATION);
@@ -327,19 +347,24 @@ void setup() {
     display.fillScreen(GxEPD_WHITE);
     display.setCursor(x, y-tbh);
     display.print(Title);
-    display.setTextColor(display.epd2.hasColor ? GxEPD_RED : GxEPD_BLACK);
+
     display.getTextBounds(VersionLong, 0, 0, &tbx, &tby, &tbw, &tbh);
     x = ((display.width() - tbw) / 2) - tbx;
-
     display.setCursor(x, y+tbh);
     display.print(VersionLong);
+
+    display.setTextColor(display.epd2.hasColor ? GxEPD_RED : GxEPD_BLACK);
+    display.getTextBounds("Find AP \""+String(AP_NAME)+"\"", 0, 0, &tbx, &tby, &tbw, &tbh);
+    x = ((display.width() - tbw) / 2) - tbx;
+    display.setCursor(x, y+(tbh * 3));
+    display.print("Find AP \""+String(AP_NAME)+"\"");
   }
   while (display.nextPage());
 
-  configTime(MY_TZ, MY_NTP_SERVER); 
+  wifiManager.autoConnect(AP_NAME);
 
 
-  Serial.begin(SERIAL_BAUD); // Start serial communication
+
 
   pinMode(LED, OUTPUT); // Enable LED pin
   pinMode(LED_E, OUTPUT); // Enable LED_E pin
@@ -352,14 +377,16 @@ void setup() {
   Serial.println("Init");
 
 
-  // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
+
+
+// SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
   /* if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
     Serial.println(F("SSD1306 allocation failed"));
     for(;;); // Don't proceed, loop forever
   }
 */
 
-  get_wifi();
+ // get_wifi();
   // Wait for display
   Serial.print("Waiting for NTP");
   now = time(nullptr);
@@ -372,7 +399,7 @@ void setup() {
     break_loop++;
   }
   if (now > 24 * 3600)
-    Serial.println("OK");
+    Serial.println(".OK");
   else
     Serial.println("error!");
   //delay(4000);

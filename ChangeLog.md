@@ -1,3 +1,7 @@
+-=# v0.0.3 (20260207) #=- 
+ADD: 
+ * WiFiManager from https://github.com/tzapu/WiFiManager 
+ 
 -=# v0.0.2 (20260201) #=- 
 ADD: 
  * platformio.ini
