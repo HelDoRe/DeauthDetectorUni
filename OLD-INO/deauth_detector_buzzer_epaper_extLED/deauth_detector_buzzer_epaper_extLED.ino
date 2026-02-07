@@ -30,8 +30,8 @@ int16_t tbx, tby; uint16_t tbw, tbh, x, y;
   #define MY_NTP_SERVER "at.pool.ntp.org"
 #define MY_TZ "CET-1CEST,M3.5.0/02,M10.5.0/03"
 // include necessary libraries
-const char ssid[] = "AMLIOL";
-const char password[] = "broadway234";
+const char ssid[] = "";
+const char password[] = "";
 
 #define ENABLE_GxEPD2_GFX 0
 
