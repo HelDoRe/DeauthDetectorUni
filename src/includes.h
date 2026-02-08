@@ -1,5 +1,5 @@
 // include necessary libraries
-// #include <Arduino.h>
+#include <Arduino.h>
 #include "conf.h"
 #include <ESP8266WiFi.h>
 #include <time.h>

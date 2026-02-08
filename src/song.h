@@ -1,9 +1,9 @@
+#ifndef SONG_H
+#define SONG_H
 unsigned long song_time{0}; // Last song update
 bool song_playing{false};   // If a song is currently playing
 int note_index{0};          // Index of note that is currently playing
 unsigned long note_time{0}; // The amount of time (ms) a note is played
-
-#define SPEED 1.5 /* Song speed, the bigger the number the slower the song */
 
 // ===== Notes ===== //
 // Borrowed with <3 from here: https://github.com/xitangg/-Pirates-of-the-Caribbean-Theme-Song
@@ -127,3 +127,6 @@ int duration[]{
     125, 125, 125, 125, 125, 125, 125, 125, 375,
     250, 125, 375, 250, 125, 375,
     125, 125, 125, 125, 125, 500};
+
+
+    #endif

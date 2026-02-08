@@ -1,3 +1,5 @@
+#include "conf.h"
+#include "language.h"
 #include "DeauthD/deauth_detect.h"
 
 // ===== Sniffer function ===== //
@@ -20,14 +22,7 @@ void sniffer(uint8_t *buf, uint16_t len)
 // ===== Attack detection functions ===== //
 void attack_started()
 {
-#ifdef BUZZER
-    // Play the song
-    song_playing = true;
-    note_index = 0;
-    note_time = duration[note_index] * SPEED;
-#endif
     total_attack_counter++;
-
 #ifdef LED
     digitalWrite(LED, !LED_INVERT); // turn LED on
 #endif
@@ -36,7 +31,7 @@ void attack_started()
 #endif
     ATTACK = true;
     packets_count = 0;
-#ifdef SERIAL_DEBUG
+#ifdef DEBUG_SERIAL
     Serial.println(attack_lng);
 #endif
 }
@@ -44,7 +39,6 @@ void attack_started()
 void attack_stopped()
 {
 #ifdef BUZZER
-    song_playing = false;
     noTone(BUZZER); // Stop playing
 #endif
 
@@ -55,7 +49,7 @@ void attack_stopped()
     digitalWrite(LED_E, LED_E_INVERT); // turn LED off
 #endif
     ATTACK = false;
-#ifdef SERIAL_DEBUG
+#ifdef DEBUG_SERIAL
     Serial.println(scanning_lng);
 #endif
 }

@@ -1,3 +1,5 @@
+#ifndef CONF_H
+#define CONF_H
 /* turn on/off feature (debug, buzzer, onboard led, external led) */
 #define DEBUG_SERIAL 1 /* Turn on serial debug output */
 #define BUZZER D6      /* Buzzer pin */
@@ -30,7 +32,9 @@
 // Channels to scan on (US=1-11, EU=1-13, JAP=1-14)
 const short channels[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 /*,14*/};
 // const String spin = "-\\|/";
-
+#ifdef BUZZER
+#define SPEED 1.5 /* Song speed, the bigger the number the slower the song */
+#endif
 #ifdef DEBUG_SERIAL
 #ifndef SERIAL_BAUD
 #define SERIAL_BAUD 115200 /* Baudrate for serial communication */
@@ -49,4 +53,6 @@ const char VersionShort[] = "v0.0.4d";
 const char Title[] = "DeauthDetector";
 const char VersionLong[] = "v0.0.4";
 const char VersionShort[] = "v0.0.4";
+#endif
+
 #endif

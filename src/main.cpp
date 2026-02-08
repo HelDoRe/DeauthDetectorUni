@@ -35,6 +35,11 @@ void display_string(String input)
 {
   String msg;
 
+  #ifdef DEBUG_SERIAL
+  Serial.println("DEBUG: song_playing: " + String(song_playing) + ", ATTACK: " + String(ATTACK) + ", packet_rate: " + String(packet_rate) + ", packets_count: " + String(packets_count) + ", total_attack_counter: " + String(total_attack_counter));
+  #endif
+  
+
   if (ATTACK != true)
   {
     if (cc3 <= 10)
@@ -234,9 +239,24 @@ void setup()
   pinMode(BUZZER, OUTPUT); // Init buzzer pin
 #endif
 
-#ifdef SERIAL_DEBUG
+#ifdef DEBUG_SERIAL
   Serial.println();
-  Serial.println("Init");
+#ifdef USE_DISPLAY
+  Serial.println("Display init OK");
+#endif
+#ifdef SYNC_NTP
+  Serial.println("WiFiManager init OK");
+#endif
+#ifdef LED
+  Serial.println("LED init OK");
+#endif
+#ifdef LED_E
+  Serial.println("External LED init OK");
+#endif
+#ifdef BUZZER
+  Serial.println("Buzzer init OK");
+#endif
+  Serial.println("Init passed, starting...");
 #endif
 
   // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
@@ -246,7 +266,7 @@ void setup()
   }
 */
 
-#ifdef SERIAL_DEBUG
+#ifdef DEBUG_SERIAL
   Serial.print("Waiting for NTP");
 #endif
   now = time(nullptr);
@@ -255,13 +275,13 @@ void setup()
   while (now < 24 * 3600 && break_loop < 21)
   {
     delay(500);
-#ifdef SERIAL_DEBUG
+#ifdef DEBUG_SERIAL
     Serial.print(".");
 #endif
     now = time(nullptr);
     break_loop++;
   }
-#ifdef SERIAL_DEBUG
+#ifdef DEBUG_SERIAL
   if (now > 24 * 3600)
     Serial.println(".OK");
   else
@@ -307,7 +327,7 @@ void setup()
   display.hibernate();
 #endif
 
-#ifdef SERIAL_DEBUG
+#ifdef DEBUG_SERIAL
   Serial.println("Started \\o/");
 #endif
 }
@@ -332,15 +352,24 @@ void loop()
       if (attack_counter >= PKT_TIME)
         attack_stopped();
       attack_counter = 0; // Reset attack counter
+#ifdef BUZZER
+    song_playing = false;
+#endif
     }
 
     // When attack exceeds minimum allowed time
     if (attack_counter == PKT_TIME)
     {
+#ifdef BUZZER
+    // Play the song
+    song_playing = true;
+    note_index = 0;
+    note_time = duration[note_index] * SPEED;
+#endif
       attack_started();
     }
 
-#ifdef SERIAL_DEBUG
+#ifdef DEBUG_SERIAL
     Serial.print("Packets/s: ");
     Serial.print(packet_rate);
     Serial.print(", Attacks: ");
