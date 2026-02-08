@@ -4,6 +4,6 @@
 #include "lang/lang_en.h"
 #endif
 #if GLOBAL_LANG == 2
-//#include "lang/lang_pl.h"
+#include "lang/lang_pl.h"
 #endif
 #endif
