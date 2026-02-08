@@ -3,7 +3,6 @@ bool song_playing{false};   // If a song is currently playing
 int note_index{0};          // Index of note that is currently playing
 unsigned long note_time{0}; // The amount of time (ms) a note is played
 
-#define BUZZER D6 /* Buzzer pin */
 #define SPEED 1.5 /* Song speed, the bigger the number the slower the song */
 
 // ===== Notes ===== //

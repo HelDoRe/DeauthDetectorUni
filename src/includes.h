@@ -1,13 +1,20 @@
 // include necessary libraries
 // #include <Arduino.h>
-#include <GxEPD2_BW.h>
-#include <GxEPD2_3C.h>
+#include "conf.h"
 #include <ESP8266WiFi.h>
 #include <time.h>
+#ifdef SYNC_NTP
 #include <WiFiManager.h> //https://github.com/tzapu/WiFiManager WiFi Configuration Magic
+#endif
 
 #include <Fonts/FreeMonoBold9pt7b.h>
 #include "fonts/Outfit_80036pt7b.h"
 #include "fonts/Outfit_60011pt7b.h"
+#ifdef BUZZER
 #include "song.h"
-#include "conf.h"
+#endif
+#include "language.h"
+#ifdef DISPLAY
+#include "display.h"
+#endif
+#include "DeauthD/deauth_detect.h"

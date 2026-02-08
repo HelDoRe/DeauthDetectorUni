@@ -1,7 +1,8 @@
 -=# v0.0.4 (20260208) #=- 
 ADD: 
  * SERIAL_DEBUG on/off 
- 
+ * some cleanup in code
+
 -=# v0.0.3 (20260207) #=- 
 ADD: 
  * WiFiManager from https://github.com/tzapu/WiFiManager 

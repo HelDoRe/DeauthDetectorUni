@@ -7,35 +7,11 @@
 short tbx, tby;
 unsigned short tbw, tbh;
 int x, y;
-#define ENABLE_GxEPD2_GFX 0
-
-// ESP8266 CS(SS)=15,SCL(SCK)=14,SDA(MOSI)=13,BUSY=16,RES(RST)=5,DC=4
-#define CS_PIN (15)
-#define BUSY_PIN (16)
-#define RES_PIN (5)
-#define DC_PIN (4)
-
-#define GxEPD2_DISPLAY_CLASS GxEPD2_BW
-#define GxEPD2_DRIVER_CLASS GxEPD2_154_D67
-#define SCREEN_WIDTH 200  // OLED display width, in pixels
-#define SCREEN_HEIGHT 200 // OLED display height, in pixels
-// 1.54'' EPD Module
-GxEPD2_DISPLAY_CLASS<GxEPD2_DRIVER_CLASS, GxEPD2_DRIVER_CLASS::HEIGHT> display(GxEPD2_DRIVER_CLASS(/*CS=*/CS_PIN, /*DC=*/DC_PIN, /*RES=*/RES_PIN, /*BUSY=*/BUSY_PIN));
 
 // include ESP8266 Non-OS SDK functions
 /*extern "C" {
 #include "user_interface.h"
 }*/
-
-// ===== SETTINGS ===== //
-#define LED 2    /* LED pin (2=built-in LED) */
-#define LED_E D3 // D3 (0),  D4 (GPIO2) /* External LED pin */
-
-#define LED_INVERT true    /* Invert HIGH/LOW for LED */
-#define LED_E_INVERT false /* Invert HIGH/LOW for LED */
-#define CH_TIME 140        /* Scan time (in ms) per channel */
-#define PKT_RATE 7         /* Min. packets before it gets recognized as an attack */
-#define PKT_TIME 1         /* Min. interval (CH_TIME*CH_RANGE) before it gets recognized as an attack */
 
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
 // The pins for I2C are defined by the Wire-library.
@@ -46,12 +22,6 @@ GxEPD2_DISPLAY_CLASS<GxEPD2_DRIVER_CLASS, GxEPD2_DRIVER_CLASS::HEIGHT> display(G
 // #define OLED_RESET     -1 // Reset pin # (or -1 if sharing Arduino reset pin)
 // #define SCREEN_ADDRESS 0x3C ///< See datasheet for Address; 0x3D for 128x64, 0x3C for 128x32
 // Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
-
-// Channels to scan on (US=1-11, EU=1-13, JAP=1-14)
-const short channels[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 /*,14*/};
-// const String spin = "-\\|/";
-const String scanning_lng = "Scanning...";
-const String attack_lng = "! Under ATTACK !";
 
 // ===== Runtime variables ===== //
 int ch_index{0};                      // Current index of channel array
@@ -67,7 +37,9 @@ bool led_ext_blink{false};
 time_t now;
 tm local_tm;
 int curHour = 0, curMinute = 0, curDay = 0, curMonth = 0, curYear = 0;
+#ifdef SYNC_NTP
 WiFiManager wifiManager;
+#endif
 
 bool ATTACK{false};   //
 int cc2{0};           // Another counter
@@ -98,7 +70,6 @@ unsigned long old_total_attack_counter;
 void display_string(String input)
 {
   String msg;
-  char timeBuffer[32];
 
   if (ATTACK != true)
   {
@@ -124,9 +95,12 @@ void display_string(String input)
     msg = "(^v^)";
   }
 
+#ifdef USE_DISPLAY
+  char timeBuffer[32];
   /*  zrobic refresh tylko wtedy jak cos sie zmienilo. */
   if (packet_rate != old_packet_rate || packets_count != old_packets_count || total_attack_counter != old_total_attack_counter)
   {
+
     display.setFont(&SMALL_FONT);
     display.setPartialWindow(100, 150, 100, 50);
     display.firstPage();
@@ -171,6 +145,8 @@ void display_string(String input)
       display.print(msg);
     } while (display.nextPage());
   }
+
+#endif
   time(&now);
   localtime_r(&now, &local_tm);
   curHour = local_tm.tm_hour;
@@ -179,7 +155,7 @@ void display_string(String input)
   curMonth = local_tm.tm_mon;
   curYear = local_tm.tm_year;
 
-
+#ifdef USE_DISPLAY
   if (curHour != old_hour || curMinute != old_minute)
   {
     display.setPartialWindow(0, 65, 200, 55);
@@ -211,6 +187,8 @@ void display_string(String input)
     } while (display.nextPage());
   }
 
+  display.hibernate();
+#endif
   old_msg = msg;
   old_input = input;
   old_total_attack_counter = total_attack_counter;
@@ -221,38 +199,49 @@ void display_string(String input)
   old_day = curDay;
   old_month = curMonth;
   old_year = curYear;
-
-  display.hibernate();
 }
 
 // ===== Attack detection functions ===== //
 void attack_started()
 {
+#ifdef BUZZER
+  // Play the song
   song_playing = true;
   note_index = 0;
   note_time = duration[note_index] * SPEED;
+#endif
   total_attack_counter++;
 
-  digitalWrite(LED, !LED_INVERT);     // turn LED on
+#ifdef LED
+  digitalWrite(LED, !LED_INVERT); // turn LED on
+#endif
+#ifdef LED_E
   digitalWrite(LED_E, !LED_E_INVERT); // turn LED on
+#endif
   ATTACK = true;
   packets_count = 0;
-  #ifdef SERIAL_DEBUG
+#ifdef SERIAL_DEBUG
   Serial.println(attack_lng);
-  #endif
+#endif
 }
 
 void attack_stopped()
 {
+#ifdef BUZZER
   song_playing = false;
   noTone(BUZZER); // Stop playing
+#endif
 
-  digitalWrite(LED, LED_INVERT);     // turn LED off
+#ifdef LED
+  digitalWrite(LED, LED_INVERT); // turn LED off
+#endif
+#ifdef LED_E
   digitalWrite(LED_E, LED_E_INVERT); // turn LED off
+#endif
   ATTACK = false;
-  #ifdef SERIAL_DEBUG
+#ifdef SERIAL_DEBUG
   Serial.println(scanning_lng);
-  #endif
+#endif
 }
 
 // ===== Setup ===== //
@@ -260,18 +249,21 @@ void setup()
 {
   String msgt;
 
-  #ifdef SERIAL_DEBUG
+#ifdef SERIAL_DEBUG
   Serial.begin(SERIAL_BAUD); // Start serial communication
-  #else
+#else
   Serial.end(); // End serial communication
-  #endif
+#endif
 
+#ifdef SYNC_NTP
   WiFi.mode(WIFI_STA); // explicitly set mode, esp defaults to STA+AP
   wifiManager.setConfigPortalTimeout(180);
   wifiManager.setDarkMode(true);
-
   configTime(MY_TZ, MY_NTP_SERVER);
+#endif
   // ePaper
+
+#ifdef USE_DISPLAY
   display.init(SERIAL_BAUD, true, 50, false);
   display.setRotation(D_ROTATION);
   display.setFont(&BASE_FONT);
@@ -294,26 +286,37 @@ void setup()
     display.setCursor(x, y + tbh);
     display.print(VersionLong);
 
+#ifdef SYNC_NTP
     display.setTextColor(display.epd2.hasColor ? GxEPD_RED : GxEPD_BLACK);
     display.getTextBounds("Find AP \"" + String(AP_NAME) + "\"", 0, 0, &tbx, &tby, &tbw, &tbh);
     x = ((display.width() - tbw) / 2) - tbx;
     display.setCursor(x, y + (tbh * 3));
     display.print("Find AP \"" + String(AP_NAME) + "\"");
+#endif
   } while (display.nextPage());
+#endif
 
+#ifdef SYNC_NTP
   wifiManager.autoConnect(AP_NAME);
+#endif
 
-  pinMode(LED, OUTPUT);   // Enable LED pin
-  pinMode(LED_E, OUTPUT); // Enable LED_E pin
+#ifdef LED
+  pinMode(LED, OUTPUT); // Enable LED pin
   digitalWrite(LED, LED_INVERT);
+#endif
+#ifdef LED_E
+  pinMode(LED_E, OUTPUT); // Enable LED_E pin
   digitalWrite(LED_E, LED_E_INVERT);
+#endif
 
+#ifdef BUZZER
   pinMode(BUZZER, OUTPUT); // Init buzzer pin
+#endif
 
-  #ifdef SERIAL_DEBUG
+#ifdef SERIAL_DEBUG
   Serial.println();
   Serial.println("Init");
-  #endif
+#endif
 
   // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
   /* if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
@@ -322,27 +325,27 @@ void setup()
   }
 */
 
-  #ifdef SERIAL_DEBUG
+#ifdef SERIAL_DEBUG
   Serial.print("Waiting for NTP");
-  #endif
+#endif
   now = time(nullptr);
   // Loop until time is > 24h since Jan 1 1970 (1st Jan 2010 onwards)
   int break_loop = 0;
   while (now < 24 * 3600 && break_loop < 21)
   {
     delay(500);
-    #ifdef SERIAL_DEBUG
+#ifdef SERIAL_DEBUG
     Serial.print(".");
-    #endif
+#endif
     now = time(nullptr);
     break_loop++;
   }
-  #ifdef SERIAL_DEBUG
+#ifdef SERIAL_DEBUG
   if (now > 24 * 3600)
     Serial.println(".OK");
   else
     Serial.println("error!");
-  #endif
+#endif
   // delay(4000);
 
   WiFi.disconnect();                   // Disconnect from any saved or active WiFi connections
@@ -353,6 +356,8 @@ void setup()
 
   time(&now);
   localtime_r(&now, &local_tm);
+
+#ifdef USE_DISPLAY
   display.setFont(&SMALL_FONT);
 
   display.setPartialWindow(0, 0, 200, 200);
@@ -379,9 +384,11 @@ void setup()
   } while (display.nextPage());
   display.setFont(&BASE_FONT);
   display.hibernate();
-  #ifdef SERIAL_DEBUG
+#endif
+
+#ifdef SERIAL_DEBUG
   Serial.println("Started \\o/");
-  #endif
+#endif
 }
 
 // ===== Loop ===== //
@@ -412,13 +419,12 @@ void loop()
       attack_started();
     }
 
-
-  #ifdef SERIAL_DEBUG
+#ifdef SERIAL_DEBUG
     Serial.print("Packets/s: ");
     Serial.print(packet_rate);
     Serial.print(", Attacks: ");
     Serial.println(total_attack_counter);
-  #endif
+#endif
 
     packet_rate = 0; // Reset packet rate
   }
@@ -430,8 +436,10 @@ void loop()
     {
       packets_count += int(packet_rate);
       display_string(attack_lng);
+#ifdef LED_E
       led_ext_blink = !led_ext_blink;
       digitalWrite(LED_E, led_ext_blink); // turn LED off
+#endif
     }
     else
     {
@@ -464,6 +472,7 @@ void loop()
     wifi_set_channel(ch);
   }
 
+#ifdef BUZZER
   if (song_playing && current_time - song_time >= note_time)
   {
     song_time = current_time;
@@ -473,4 +482,5 @@ void loop()
 
     tone(BUZZER, notes[note_index], note_time);
   }
+#endif
 }
