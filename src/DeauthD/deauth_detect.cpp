@@ -1,6 +1,6 @@
+#include "DeauthD/deauth_detect.h"
 #include "conf.h"
 #include "language.h"
-#include "DeauthD/deauth_detect.h"
 
 // ===== Sniffer function ===== //
 void sniffer(uint8_t *buf, uint16_t len)

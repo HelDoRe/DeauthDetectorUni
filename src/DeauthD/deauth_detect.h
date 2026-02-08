@@ -1,7 +1,7 @@
-#include <Arduino.h>
-
 #ifndef DEAUTH_DETECT_H
 #define DEAUTH_DETECT_H
+
+#include <Arduino.h>
 
 extern int packet_rate;                    // Deauth packet counter (resets with each update)
 extern unsigned long total_attack_counter; // Total attacks counter

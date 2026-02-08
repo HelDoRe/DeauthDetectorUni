@@ -4,10 +4,6 @@
 
 #include "includes.h"
 
-short tbx, tby;
-unsigned short tbw, tbh;
-int x, y;
-
 // include ESP8266 Non-OS SDK functions
 /*extern "C" {
 #include "user_interface.h"
@@ -27,147 +23,39 @@ int x, y;
 WiFiManager wifiManager;
 #endif
 
-String old_msg, old_input;
-int old_packet_rate, old_packets_count, old_hour, old_minute, old_day, old_month, old_year;
-unsigned long old_total_attack_counter;
-
 void display_string(String input)
 {
   String msg;
-
-  #ifdef DEBUG_SERIAL
-  Serial.println("DEBUG: song_playing: " + String(song_playing) + ", ATTACK: " + String(ATTACK) + ", packet_rate: " + String(packet_rate) + ", packets_count: " + String(packets_count) + ", total_attack_counter: " + String(total_attack_counter));
-  #endif
-  
 
   if (ATTACK != true)
   {
     if (cc3 <= 10)
     {
-      msg = "(o_o)";
+      msg = faces[1];
     }
     else if (10 < cc3 and cc3 <= 20)
     {
-      msg = "(O_o)";
+      msg = faces[2];
     }
     else if (20 < cc3 and cc3 <= 30)
     {
-      msg = "(O_O)";
+      msg = faces[3];
     }
     else if (30 < cc3 and cc3 <= 40)
     {
-      msg = "(o_O)";
+      msg = faces[4];
     }
   }
   else
   {
-    msg = "(^v^)";
+    msg = faces[0];
   }
-
-#ifdef USE_DISPLAY
-  char timeBuffer[32];
-  /*  zrobic refresh tylko wtedy jak cos sie zmienilo. */
-  if (packet_rate != old_packet_rate || packets_count != old_packets_count || total_attack_counter != old_total_attack_counter)
-  {
-
-    display.setFont(&SMALL_FONT);
-    display.setPartialWindow(100, 150, 100, 50);
-    display.firstPage();
-    do
-    {
-      display.setTextSize(1);
-      display.setCursor(106, 165);
-      display.print(String(packets_count));
-      display.setCursor(106, 180);
-      display.print(String(packet_rate));
-      display.setCursor(106, 195);
-      display.print(String(total_attack_counter));
-    } while (display.nextPage());
-  }
-
-  if (input != old_input)
-  {
-    display.setFont(&BASE_FONT);
-    display.setPartialWindow(0, 39, 200, 15);
-    display.firstPage();
-    do
-    {
-      display.setTextSize(1);
-      display.getTextBounds(input.c_str(), 0, 0, &tbx, &tby, &tbw, &tbh);
-      x = ((display.width() - tbw) / 2) - tbx;
-      display.setCursor(x, 54);
-      display.print(input);
-    } while (display.nextPage());
-  }
-
-  if (msg != old_msg)
-  {
-    display.setFont(&BASE_FONT);
-    display.setPartialWindow(0, 0, 200, 35);
-    display.firstPage();
-    do
-    {
-      display.setTextSize(2);
-      display.getTextBounds(msg.c_str(), 0, 0, &tbx, &tby, &tbw, &tbh);
-      x = ((display.width() - tbw) / 2) - tbx;
-      display.setCursor(x, 30);
-      display.print(msg);
-    } while (display.nextPage());
-  }
-
+// String(spin[cc2])
+#ifdef DEBUG_SERIAL
+  Serial.println("DEBUG: spin:" + spin[cc2] + ", msg:" + msg + ", display_update_interval: " + String(display_update_interval) + ", song_playing: " + String(song_playing) + ", ATTACK: " + String(ATTACK) + ", packet_rate: " + String(packet_rate) + ", packets_count: " + String(packets_count) + ", total_attack_counter: " + String(total_attack_counter));
 #endif
-  time(&now);
-  localtime_r(&now, &local_tm);
-  curHour = local_tm.tm_hour;
-  curMinute = local_tm.tm_min;
-  curDay = local_tm.tm_mday;
-  curMonth = local_tm.tm_mon;
-  curYear = local_tm.tm_year;
 
-#ifdef USE_DISPLAY
-  if (curHour != old_hour || curMinute != old_minute)
-  {
-    display.setPartialWindow(0, 65, 200, 55);
-    display.firstPage();
-    display.setFont(&BIG_FONT);
-    display.setTextSize(1);
-    sprintf(timeBuffer, "%02d:%02d", curHour, curMinute);
-    display.getTextBounds((const char *)timeBuffer, 0, 0, &tbx, &tby, &tbw, &tbh);
-    x = ((display.width() - tbw) / 2) - tbx;
-    do
-    {
-      display.setCursor(x, 115);
-      display.print(timeBuffer);
-    } while (display.nextPage());
-  }
-  display.setFont(&BASE_FONT);
-  if (curDay != old_day || curMonth != old_month)
-  {
-    display.setPartialWindow(0, 120, 200, 15);
-    display.firstPage();
-    display.setTextSize(1);
-    sprintf(timeBuffer, "%04d/%02d/%02d", 1900 + curYear, 1 + curMonth, curDay);
-    display.getTextBounds((const char *)timeBuffer, 0, 0, &tbx, &tby, &tbw, &tbh);
-    x = ((display.width() - tbw) / 2) - tbx;
-    do
-    {
-      display.setCursor(x, 135);
-      display.print(timeBuffer);
-    } while (display.nextPage());
-  }
-
-  display.hibernate();
-#endif
-  old_msg = msg;
-  old_input = input;
-  old_total_attack_counter = total_attack_counter;
-  old_packets_count = packets_count;
-  old_packet_rate = packet_rate;
-  old_hour = curHour;
-  old_minute = curMinute;
-  old_day = curDay;
-  old_month = curMonth;
-  old_year = curYear;
+  display_update(input, msg, packet_rate, packets_count, total_attack_counter);
 }
 
 // ===== Setup ===== //
@@ -175,7 +63,7 @@ void setup()
 {
   String msgt;
 
-#ifdef SERIAL_DEBUG
+#ifdef DEBUG_SERIAL
   Serial.begin(SERIAL_BAUD); // Start serial communication
 #else
   Serial.end(); // End serial communication
@@ -186,40 +74,6 @@ void setup()
   wifiManager.setConfigPortalTimeout(180);
   wifiManager.setDarkMode(true);
   configTime(MY_TZ, MY_NTP_SERVER);
-#endif
-  // ePaper
-
-#ifdef USE_DISPLAY
-  display.init(SERIAL_BAUD, true, 50, false);
-  display.setRotation(D_ROTATION);
-  display.setFont(&BASE_FONT);
-  display.setTextColor(GxEPD_BLACK);
-
-  display.getTextBounds(Title, 0, 0, &tbx, &tby, &tbw, &tbh);
-  // center the bounding box by transposition of the origin:
-  x = ((display.width() - tbw) / 2) - tbx;
-  y = ((display.height() - tbh) / 2) - tby;
-  display.setFullWindow();
-  display.firstPage();
-  do
-  {
-    display.fillScreen(GxEPD_WHITE);
-    display.setCursor(x, y - tbh);
-    display.print(Title);
-
-    display.getTextBounds(VersionLong, 0, 0, &tbx, &tby, &tbw, &tbh);
-    x = ((display.width() - tbw) / 2) - tbx;
-    display.setCursor(x, y + tbh);
-    display.print(VersionLong);
-
-#ifdef SYNC_NTP
-    display.setTextColor(display.epd2.hasColor ? GxEPD_RED : GxEPD_BLACK);
-    display.getTextBounds("Find AP \"" + String(AP_NAME) + "\"", 0, 0, &tbx, &tby, &tbw, &tbh);
-    x = ((display.width() - tbw) / 2) - tbx;
-    display.setCursor(x, y + (tbh * 3));
-    display.print("Find AP \"" + String(AP_NAME) + "\"");
-#endif
-  } while (display.nextPage());
 #endif
 
 #ifdef SYNC_NTP
@@ -242,6 +96,7 @@ void setup()
 #ifdef DEBUG_SERIAL
   Serial.println();
 #ifdef USE_DISPLAY
+  display_init();
   Serial.println("Display init OK");
 #endif
 #ifdef SYNC_NTP
@@ -287,7 +142,6 @@ void setup()
   else
     Serial.println("error!");
 #endif
-  // delay(4000);
 
   WiFi.disconnect();                   // Disconnect from any saved or active WiFi connections
   wifi_set_opmode(STATION_MODE);       // Set device to client/station mode
@@ -299,32 +153,7 @@ void setup()
   localtime_r(&now, &local_tm);
 
 #ifdef USE_DISPLAY
-  display.setFont(&SMALL_FONT);
-
-  display.setPartialWindow(0, 0, 200, 200);
-  display.firstPage();
-  do
-  {
-    display.setCursor(6, 165);
-    display.print("Packets : 0");
-    display.setCursor(6, 180);
-    display.print("Packs/s : 0");
-    display.setCursor(6, 195);
-    display.print("Attacks : 0");
-    display.setFont(&BASE_FONT);
-    display.setTextSize(1);
-    display.getTextBounds(scanning_lng.c_str(), 0, 0, &tbx, &tby, &tbw, &tbh);
-    x = ((display.width() - tbw) / 2) - tbx;
-    display.setCursor(x, 53);
-    display.print(scanning_lng);
-    display.setTextSize(2);
-    display.getTextBounds("(o_o)", 0, 0, &tbx, &tby, &tbw, &tbh);
-    x = ((display.width() - tbw) / 2) - tbx;
-    display.setCursor(x, 30);
-    display.print("(o_o)");
-  } while (display.nextPage());
-  display.setFont(&BASE_FONT);
-  display.hibernate();
+  display_first_time(faces[1]);
 #endif
 
 #ifdef DEBUG_SERIAL
@@ -341,7 +170,6 @@ void loop()
   if (current_time - update_time >= (sizeof(channels) * CH_TIME))
   {
     update_time = current_time; // Update time variable
-
     // When detected deauth packets exceed the minimum allowed number
     if (packet_rate >= PKT_RATE)
     {
@@ -350,21 +178,23 @@ void loop()
     else
     {
       if (attack_counter >= PKT_TIME)
+      {
         attack_stopped();
-      attack_counter = 0; // Reset attack counter
+        attack_counter = 0; // Reset attack counter
 #ifdef BUZZER
-    song_playing = false;
+        song_playing = false;
 #endif
+      }
     }
 
     // When attack exceeds minimum allowed time
     if (attack_counter == PKT_TIME)
     {
 #ifdef BUZZER
-    // Play the song
-    song_playing = true;
-    note_index = 0;
-    note_time = duration[note_index] * SPEED;
+      // Play the song
+      song_playing = true;
+      note_index = 0;
+      note_time = duration[note_index] * SPEED;
 #endif
       attack_started();
     }
@@ -379,7 +209,7 @@ void loop()
     packet_rate = 0; // Reset packet rate
   }
 
-  if (current_time - update_time_display >= 3000)
+  if (current_time - update_time_display >= display_update_interval)
   {
     update_time_display = current_time; // Update time variable
     if (ATTACK == true)
@@ -415,10 +245,6 @@ void loop()
     // Get next channel
     ch_index = (ch_index + 1) % (sizeof(channels) / sizeof(channels[0]));
     short ch = channels[ch_index];
-
-    // Set channel
-    // Serial.print("Set channel to ");
-    // Serial.println(ch);
     wifi_set_channel(ch);
   }
 

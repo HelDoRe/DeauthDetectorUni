@@ -9,12 +9,9 @@
 #define USE_DISPLAY 1  /* Turn on display */
 
 #define GLOBAL_LANG 1                /* Language for display (1 = en, 2 = pl, ...) - more can be added in lang/ folder */
-#define DISPLAY_TYPE 1               /* Display type: 1 = "EPD_154", 2 = "OLED_096" */
+#define DISPLAY_TYPE 1               /* Display type: 1 = "EPD_154", 2 = "OLED_096", 3 = "miniTV_144" */
 #define D_ROTATION 1                 /* Display orientation */
-#define BASE_FONT Outfit_60011pt7b   /* Primary font */
-#define SMALL_FONT FreeMonoBold9pt7b /* Small info font */
-#define BIG_FONT Outfit_80036pt7b    /* Big clock font */
-
+//#define D_INVERT_COLORS 1          /* Invert display colors */
 #ifdef SYNC_NTP
 #define MY_NTP_SERVER "at.pool.ntp.org"        /* NTP server */
 #define MY_TZ "CET-1CEST,M3.5.0/02,M10.5.0/03" /* Timezone (Central European Time) */
@@ -31,7 +28,9 @@
 #define PKT_TIME 1  /* Min. interval (CH_TIME*CH_RANGE) before it gets recognized as an attack */
 // Channels to scan on (US=1-11, EU=1-13, JAP=1-14)
 const short channels[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 /*,14*/};
-// const String spin = "-\\|/";
+const String spin[] = {"-", "\\", "|", "/"};
+const String faces[] = {"(^v^)", "(o_o)", "(O_o)", "(O_O)", "(o_O)"};
+
 #ifdef BUZZER
 #define SPEED 1.5 /* Song speed, the bigger the number the slower the song */
 #endif
