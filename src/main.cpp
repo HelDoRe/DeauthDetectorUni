@@ -23,45 +23,9 @@ int x, y;
 // #define SCREEN_ADDRESS 0x3C ///< See datasheet for Address; 0x3D for 128x64, 0x3C for 128x32
 // Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
-// ===== Runtime variables ===== //
-int ch_index{0};                      // Current index of channel array
-int packet_rate{0};                   // Deauth packet counter (resets with each update)
-unsigned long attack_counter{0};      // Attack counter
-unsigned long update_time{0};         // Last update time
-unsigned long update_time_display{0}; // Last update for display
-unsigned long ch_time{0};             // Last channel hop time
-
-unsigned long total_attack_counter{0}; // Total attacks counter
-bool led_ext_blink{false};
-
-time_t now;
-tm local_tm;
-int curHour = 0, curMinute = 0, curDay = 0, curMonth = 0, curYear = 0;
 #ifdef SYNC_NTP
 WiFiManager wifiManager;
 #endif
-
-bool ATTACK{false};   //
-int cc2{0};           // Another counter
-int cc3{0};           // Another counter
-int packets_count{0}; // Last Deauth packets counts
-
-// ===== Sniffer function ===== //
-void sniffer(uint8_t *buf, uint16_t len)
-{
-  if (!buf || len < 28)
-    return; // Drop packets without MAC header
-
-  byte pkt_type = buf[12]; // second half of frame control field
-  // byte* addr_a = &buf[16]; // first MAC address
-  // byte* addr_b = &buf[22]; // second MAC address
-
-  // If captured packet is a deauthentication or dissassociaten frame
-  if (pkt_type == 0xA0 || pkt_type == 0xC0)
-  {
-    ++packet_rate;
-  }
-}
 
 String old_msg, old_input;
 int old_packet_rate, old_packets_count, old_hour, old_minute, old_day, old_month, old_year;
@@ -199,49 +163,6 @@ void display_string(String input)
   old_day = curDay;
   old_month = curMonth;
   old_year = curYear;
-}
-
-// ===== Attack detection functions ===== //
-void attack_started()
-{
-#ifdef BUZZER
-  // Play the song
-  song_playing = true;
-  note_index = 0;
-  note_time = duration[note_index] * SPEED;
-#endif
-  total_attack_counter++;
-
-#ifdef LED
-  digitalWrite(LED, !LED_INVERT); // turn LED on
-#endif
-#ifdef LED_E
-  digitalWrite(LED_E, !LED_E_INVERT); // turn LED on
-#endif
-  ATTACK = true;
-  packets_count = 0;
-#ifdef SERIAL_DEBUG
-  Serial.println(attack_lng);
-#endif
-}
-
-void attack_stopped()
-{
-#ifdef BUZZER
-  song_playing = false;
-  noTone(BUZZER); // Stop playing
-#endif
-
-#ifdef LED
-  digitalWrite(LED, LED_INVERT); // turn LED off
-#endif
-#ifdef LED_E
-  digitalWrite(LED_E, LED_E_INVERT); // turn LED off
-#endif
-  ATTACK = false;
-#ifdef SERIAL_DEBUG
-  Serial.println(scanning_lng);
-#endif
 }
 
 // ===== Setup ===== //

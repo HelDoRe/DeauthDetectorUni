@@ -1,10 +1,10 @@
 /* turn on/off feature (debug, buzzer, onboard led, external led) */
 #define DEBUG_SERIAL 1 /* Turn on serial debug output */
-#define BUZZER D6 /* Buzzer pin */
-#define LED 2         /* LED pin (2=built-in LED) */
-#define LED_E D3      // D3 (0),  D4 (GPIO2) /* External LED pin */
-#define SYNC_NTP 1    /* Sync time with NTP server at startup */
-#define USE_DISPLAY 1 /* Turn on display */
+#define BUZZER D6      /* Buzzer pin */
+#define LED 2          /* LED pin (2=built-in LED) */
+#define LED_E D3       // D3 (0),  D4 (GPIO2) /* External LED pin */
+#define SYNC_NTP 1     /* Sync time with NTP server at startup */
+#define USE_DISPLAY 1  /* Turn on display */
 
 #define GLOBAL_LANG 1                /* Language for display (1 = en, 2 = pl, ...) - more can be added in lang/ folder */
 #define DISPLAY_TYPE 1               /* Display type: 1 = "EPD_154", 2 = "OLED_096" */
