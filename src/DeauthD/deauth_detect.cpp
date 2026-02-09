@@ -42,7 +42,6 @@ void attack_started()
     digitalWrite(LED_E, !LED_E_INVERT); // turn LED on
 #endif
     ATTACK = true;
-    packets_count = 0;
 #ifdef DEBUG_SERIAL
     Serial.println(attack_lng);
 #endif

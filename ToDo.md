@@ -25,3 +25,4 @@
    niektore ustawienia - reset to defaults z poziomu web (zastanowic sie czy dac) 
    OTA? 
    w platformio.ini dac tez konfig pinow (i moze reszte co sie da bo rotation i invert wlazlo :) 
+   
