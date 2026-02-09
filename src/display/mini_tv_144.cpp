@@ -45,21 +45,52 @@ void display_init()
 #endif
     tft.fillScreen(BG_COLOR);
     tft.setTextColor(GREY_COLOR, BG_COLOR);
+    tft.setFont();
 
-          tft.drawFastHLine(0,0,128,GREY_COLOR);
-          tft.drawFastHLine(0,18,128,GREY_COLOR);
-          tft.drawFastHLine(0,106,128,GREY_COLOR);
-          // tft.drawFastVLine(80,0,18,GREY_COLOR);
-          tft.drawFastHLine(0,88,128,GREY_COLOR);
-          // tft.drawFastVLine(32,88,18,GREY_COLOR);
-          tft.drawFastVLine(78,88,18,GREY_COLOR);
-          tft.drawFastVLine(40,106,20,GREY_COLOR);
-          tft.drawFastHLine(0,127,128,GREY_COLOR);
+    tft.getTextBounds(Title, 0, 0, &tbx, &tby, &tbw, &tbh);
+    // center the bounding box by transposition of the origin:
+    x = ((tft.width() - tbw) / 2) - tbx;
+    y = ((tft.height() - tbh) / 2) - tby;
+        tft.fillScreen(BG_COLOR);
+        tft.setCursor(x, y - tbh);
+        tft.print(Title);
+        tft.getTextBounds(VersionLong, 0, 0, &tbx, &tby, &tbw, &tbh);
+        x = ((tft.width() - tbw) / 2) - tbx;
+        tft.setCursor(x, y + tbh);
+        tft.print(VersionLong);
+
+#ifdef SYNC_NTP
+        tft.setTextColor(ALERT_COLOR, BG_COLOR);
+        tft.getTextBounds(String(findAP_lng) + "\"" + String(AP_NAME) + "\"", 0, 0, &tbx, &tby, &tbw, &tbh);
+        x = ((tft.width() - tbw) / 2) - tbx;
+        tft.setCursor(x, y + (tbh * 3));
+        tft.print(String(findAP_lng) + "\"" + String(AP_NAME) + "\"");
+#endif
 
     display_update_interval = 500; // Set display update interval to 500 ms
 }
 void display_first_time(String input)
 {
+    tft.fillScreen(BG_COLOR);
+    tft.setTextColor(GREY_COLOR, BG_COLOR);
+    tft.setFont();
+        tft.setCursor(3, 95);
+        tft.print(pkt_lng + "0");
+        tft.setCursor(3, 105);
+        tft.print(packs_lng + "0");
+        tft.setCursor(3, 115);
+        tft.print(attacks_lng + "0");
+          tft.drawFastHLine(0,0,128,GREY_COLOR);
+          tft.drawFastHLine(0,18,128,GREY_COLOR);
+
+          //////tft.drawFastHLine(0,106,128,GREY_COLOR);
+          // tft.drawFastVLine(80,0,18,GREY_COLOR);
+          tft.drawFastHLine(0,88,128,GREY_COLOR);
+          // tft.drawFastVLine(32,88,18,GREY_COLOR);
+          ////tft.drawFastVLine(78,88,18,GREY_COLOR);
+          ////tft.drawFastVLine(40,106,20,GREY_COLOR);
+          tft.drawFastVLine(53,88,38,GREY_COLOR);
+          tft.drawFastHLine(0,127,128,GREY_COLOR);
 }
 void display_update(String input, String msg, char spin, int packet_rate, int packets_count, unsigned long total_attack_counter)
 {
@@ -77,16 +108,29 @@ void display_update(String input, String msg, char spin, int packet_rate, int pa
   tft.setCursor(120, 6);
   tft.print(spin);
 
+    if (packet_rate != old_packet_rate || packets_count != old_packets_count || total_attack_counter != old_total_attack_counter)
+    {
+
+        tft.setFont();
+        tft.setTextSize(1);
+        tft.fillRect(61, 95, 60, 30 , BG_COLOR);
+        tft.setCursor(61, 95);
+        tft.print(String(packets_count));
+        tft.setCursor(61, 105);
+        tft.print(String(packet_rate));
+        tft.setCursor(61, 115);
+        tft.print(String(total_attack_counter));
+    }
 
     if (input != old_input)
     {
         tft.setFont();
         tft.getTextBounds(old_input.c_str(), 0, 0, &tbx, &tby, &tbw, &tbh);
         x = ((tft.width() - tbw) / 2) - tbx;
-        tft.fillRect(x - 1, 70, tbw + 2, tbh , BG_COLOR);
+        tft.fillRect(x - 1, 73, tbw + 2, tbh , BG_COLOR);
             tft.getTextBounds(input.c_str(), 0, 0, &tbx, &tby, &tbw, &tbh);
             x = ((tft.width() - tbw) / 2) - tbx;
-            tft.setCursor(x, 70);
+            tft.setCursor(x, 73);
             if (!ATTACK)
             {
                 tft.setTextColor(GREEN_COLOR, BG_COLOR);
@@ -118,16 +162,18 @@ void display_update(String input, String msg, char spin, int packet_rate, int pa
    if (curHour != old_hour || curMinute != old_minute)
     {
         tft.setFont(&BASE_FONT);
+        tft.setTextSize(2);
         sprintf(timeBuffer, "%02d:%02d", old_hour, old_minute);
         tft.getTextBounds((const char *)timeBuffer, 0, 0, &tbx, &tby, &tbw, &tbh);
         x = ((tft.width() - tbw) / 2) - tbx;
-        tft.fillRect(x - 1, 40 - tbh, tbw + 2, tbh + 1, BG_COLOR);
+        tft.fillRect(x - 1, 50 - tbh, tbw + 2, tbh + 3, BG_COLOR);
         sprintf(timeBuffer, "%02d:%02d", curHour, curMinute);
         tft.getTextBounds((const char *)timeBuffer, 0, 0, &tbx, &tby, &tbw, &tbh);
         x = ((tft.width() - tbw) / 2) - tbx;
-        tft.setCursor(x, 40);
+        tft.setCursor(x, 50);
         tft.setTextColor(FG_COLOR, BG_COLOR);
         tft.print(timeBuffer);
+        tft.setTextSize(1);
     }
     if (curDay != old_day || curMonth != old_month || curYear != old_year)
     {
@@ -136,11 +182,11 @@ void display_update(String input, String msg, char spin, int packet_rate, int pa
         sprintf(timeBuffer, "%04d/%02d/%02d", 1900 + old_year, 1 + old_month, old_day);
         tft.getTextBounds((const char *)timeBuffer, 0, 0, &tbx, &tby, &tbw, &tbh);
         x = ((tft.width() - tbw) / 2) - tbx;
-        tft.fillRect(x, 40 + 4, tbw + 4, tbh + 2, BG_COLOR);
+        tft.fillRect(x, 48 + 4, tbw + 4, tbh + 2, BG_COLOR);
         sprintf(timeBuffer, "%04d/%02d/%02d", 1900 + curYear, 1 + curMonth, curDay);
         tft.getTextBounds((const char *)timeBuffer, 0, 0, &tbx, &tby, &tbw, &tbh);
         x = ((tft.width() - tbw) / 2) - tbx;
-        tft.setCursor(x, 40 + tbh + 3);
+        tft.setCursor(x, 48 + tbh + 3);
         tft.print(timeBuffer);
     }
     
