@@ -2,6 +2,7 @@
 ADD: 
  * Multiplatform in .ini 
  * Start adding support for MiniTV 1.44" 
+ * MiniTV show time, date, status.
 
 -=# v0.0.4 (20260208) #=- 
 ADD: 

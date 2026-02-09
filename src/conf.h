@@ -12,11 +12,18 @@
 #ifndef DISPLAY_TYPE
 #define DISPLAY_TYPE 1               /* Display type: 1 = "EPD_154", 2 = "OLED_096", 3 = "miniTV_144" */
 #endif
+#ifndef D_ROTATION
 #define D_ROTATION 1                 /* Display orientation */
+#endif
 //#define D_INVERT_COLORS 1          /* Invert display colors */
 #ifdef SYNC_NTP
 const char MY_NTP_SERVER[] = "at.pool.ntp.org";        /* NTP server */
+#ifdef PLATFORM_8266
 const char MY_TZ[] = "CET-1CEST,M3.5.0/02,M10.5.0/03"; /* Timezone (Central European Time) */
+#endif
+#ifdef PLATFORM_ESP32
+const int MY_TZ = 1 ; /* Timezone offset in hours (Central European Time) */
+#endif
 #endif
 
 #ifdef LED

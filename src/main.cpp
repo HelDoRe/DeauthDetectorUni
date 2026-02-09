@@ -46,7 +46,7 @@ void display_string(String input)
 #endif
 
 #ifdef USE_DISPLAY
-  display_update(input, msg, packet_rate, packets_count, total_attack_counter);
+  display_update(input, msg, spin[cc2].charAt(0), packet_rate, packets_count, total_attack_counter);
 #endif
 }
 
@@ -70,7 +70,7 @@ delay(500); // Wait for serial to initialize
   configTime(MY_TZ, MY_NTP_SERVER);
 #endif
 #ifdef PLATFORM_ESP32
-  configTime(0, 0,  MY_NTP_SERVER);
+  configTime(MY_TZ * 3600, 0,  MY_NTP_SERVER);
 #endif
 #endif
 

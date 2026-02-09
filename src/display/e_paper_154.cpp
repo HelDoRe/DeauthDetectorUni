@@ -91,7 +91,7 @@ void display_first_time(String input)
     display.hibernate();
 }
 
-void display_update(String input, String msg, int packet_rate, int packets_count, unsigned long total_attack_counter)
+void display_update(String input, String msg, char spin,int packet_rate, int packets_count, unsigned long total_attack_counter)
 {
     char timeBuffer[32];
 
