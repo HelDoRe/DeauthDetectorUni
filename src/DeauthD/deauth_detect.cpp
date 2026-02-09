@@ -23,6 +23,10 @@ void sniffer(uint8_t *buf, uint16_t len)
 #endif
 #ifdef PLATFORM_ESP32
 void sniffer(void* buf, wifi_promiscuous_pkt_type_t type) {
+  wifi_promiscuous_pkt_t* pkt = (wifi_promiscuous_pkt_t*)buf;
+  wifi_pkt_rx_ctrl_t ctrl = (wifi_pkt_rx_ctrl_t)pkt->rx_ctrl;
+
+  if (type == WIFI_PKT_MGMT && (pkt->payload[0] == 0xA0 || pkt->payload[0] == 0xC0 )) ++packet_rate;
     return;
 }
 #endif

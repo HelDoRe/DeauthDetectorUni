@@ -1,6 +1,6 @@
 -=# v0.0.5 (20260209) #=- 
 ADD: 
- * Multiplatform in .ini (Deauth on ESP32 (in progress)/ESP8266 (working)) 
+ * Multiplatform in .ini 
  * Start adding support for MiniTV 1.44" 
 
 -=# v0.0.4 (20260208) #=- 
