@@ -9,7 +9,9 @@
 #define USE_DISPLAY 1  /* Turn on display */
 
 #define GLOBAL_LANG 1                /* Language for display (1 = en, 2 = pl, ...) - more can be added in lang/ folder */
-#define DISPLAY_TYPE 3               /* Display type: 1 = "EPD_154", 2 = "OLED_096", 3 = "miniTV_144" */
+#ifndef DISPLAY_TYPE
+#define DISPLAY_TYPE 1               /* Display type: 1 = "EPD_154", 2 = "OLED_096", 3 = "miniTV_144" */
+#endif
 #define D_ROTATION 1                 /* Display orientation */
 //#define D_INVERT_COLORS 1          /* Invert display colors */
 #ifdef SYNC_NTP
