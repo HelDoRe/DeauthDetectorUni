@@ -1,6 +1,7 @@
 #ifndef E_PAPER_154_H
 #define E_PAPER_154_H
 
+#if DISPLAY_TYPE == 1
 #include <GxEPD2_BW.h>
 #include <GxEPD2_3C.h>
 #include <Fonts/FreeMonoBold9pt7b.h>
@@ -29,5 +30,6 @@ extern int curHour, curMinute, curDay, curMonth, curYear;
 void display_init();
 void display_first_time(String input);
 void display_update(String input, String msg, int packet_rate, int packets_count, unsigned long total_attack_counter);
+#endif
 
 #endif

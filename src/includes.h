@@ -1,7 +1,13 @@
 // include necessary libraries
 #include <Arduino.h>
 #include "conf.h"
+#ifdef PLATFORM_8266
 #include <ESP8266WiFi.h>
+#endif
+#ifdef PLATFORM_ESP32
+#include <WiFi.h>
+#include <esp_wifi.h>
+#endif
 #include <time.h>
 #ifdef SYNC_NTP
 #include <WiFiManager.h> //https://github.com/tzapu/WiFiManager WiFi Configuration Magic

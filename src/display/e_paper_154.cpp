@@ -1,7 +1,9 @@
-#include "display/e_paper_154.h"
+#include <Arduino.h>
 #include "conf.h"
+#include "display/e_paper_154.h"
 #include "language.h"
 
+#if DISPLAY_TYPE == 1
 short tbx, tby;
 unsigned short tbw, tbh;
 int x, y;
@@ -157,7 +159,10 @@ void display_update(String input, String msg, int packet_rate, int packets_count
         display.setTextSize(1);
         sprintf(timeBuffer, "%02d:%02d", curHour, curMinute);
         display.getTextBounds((const char *)timeBuffer, 0, 0, &tbx, &tby, &tbw, &tbh);
-        x = ((display.width() - tbw) / 2) - tbx;
+        if (curHour < 1 && curMinute < 10)
+         x = 0;
+         else
+         x = ((display.width() - tbw) / 2) - tbx;
         do
         {
             display.setCursor(x, 115);
@@ -193,3 +198,4 @@ void display_update(String input, String msg, int packet_rate, int packets_count
     old_month = curMonth;
     old_year = curYear;
 }
+#endif

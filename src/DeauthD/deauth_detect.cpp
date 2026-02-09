@@ -2,7 +2,9 @@
 #include "conf.h"
 #include "language.h"
 
+
 // ===== Sniffer function ===== //
+#ifdef PLATFORM_8266
 void sniffer(uint8_t *buf, uint16_t len)
 {
     if (!buf || len < 28)
@@ -18,6 +20,12 @@ void sniffer(uint8_t *buf, uint16_t len)
         ++packet_rate;
     }
 }
+#endif
+#ifdef PLATFORM_ESP32
+void sniffer(void* buf, wifi_promiscuous_pkt_type_t type) {
+    return;
+}
+#endif
 
 // ===== Attack detection functions ===== //
 void attack_started()

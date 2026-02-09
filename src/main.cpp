@@ -42,10 +42,12 @@ void display_string(String input)
   }
 // String(spin[cc2])
 #ifdef DEBUG_SERIAL
-  Serial.println("DEBUG: spin:" + spin[cc2] + ", msg:" + msg + ", display_update_interval: " + String(display_update_interval) + ", song_playing: " + String(song_playing) + ", ATTACK: " + String(ATTACK) + ", packet_rate: " + String(packet_rate) + ", packets_count: " + String(packets_count) + ", total_attack_counter: " + String(total_attack_counter));
+  Serial.println("DEBUG: spin:" + spin[cc2] + ", msg:" + msg + ", display_update_interval: " + String(display_update_interval)  + ", ATTACK: " + String(ATTACK) + ", packet_rate: " + String(packet_rate) + ", packets_count: " + String(packets_count) + ", total_attack_counter: " + String(total_attack_counter));
 #endif
 
+#ifdef USE_DISPLAY
   display_update(input, msg, packet_rate, packets_count, total_attack_counter);
+#endif
 }
 
 // ===== Setup ===== //
@@ -58,12 +60,18 @@ void setup()
 #else
   Serial.end(); // End serial communication
 #endif
+delay(500); // Wait for serial to initialize
 
 #ifdef SYNC_NTP
   WiFi.mode(WIFI_STA); // explicitly set mode, esp defaults to STA+AP
   wifiManager.setConfigPortalTimeout(180);
   wifiManager.setDarkMode(true);
+#ifdef PLATFORM_8266
   configTime(MY_TZ, MY_NTP_SERVER);
+#endif
+#ifdef PLATFORM_ESP32
+  configTime(0, 0,  MY_NTP_SERVER);
+#endif
 #endif
 
 #ifdef SYNC_NTP
@@ -127,11 +135,18 @@ void setup()
 #endif
 
   WiFi.disconnect();                   // Disconnect from any saved or active WiFi connections
+  #ifdef PLATFORM_8266
   wifi_set_opmode(STATION_MODE);       // Set device to client/station mode
   wifi_set_promiscuous_rx_cb(sniffer); // Set sniffer function
   wifi_set_channel(channels[0]);       // Set channel
   wifi_promiscuous_enable(true);       // Enable sniffer
-
+  #endif
+  #ifdef PLATFORM_ESP32
+  esp_wifi_set_promiscuous(false);          // Disable sniffer 
+  esp_wifi_set_promiscuous_rx_cb(&sniffer); // Set sniffer function
+  esp_wifi_set_channel(channels[0], WIFI_SECOND_CHAN_NONE);       // Set channel before promiscuous mode, otherwise it will be stuck on channel 1
+  esp_wifi_set_promiscuous(true);          // Enable sniffer 
+  #endif
   time(&now);
   localtime_r(&now, &local_tm);
 
@@ -228,7 +243,12 @@ void loop()
     // Get next channel
     ch_index = (ch_index + 1) % (sizeof(channels) / sizeof(channels[0]));
     short ch = channels[ch_index];
+#ifdef PLATFORM_8266
     wifi_set_channel(ch);
+#endif
+#ifdef PLATFORM_ESP32
+    esp_wifi_set_channel(ch, WIFI_SECOND_CHAN_NONE);
+#endif
   }
 
 #ifdef BUZZER

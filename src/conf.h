@@ -2,19 +2,19 @@
 #define CONF_H
 /* turn on/off feature (debug, buzzer, onboard led, external led) */
 #define DEBUG_SERIAL 1 /* Turn on serial debug output */
-#define BUZZER D6      /* Buzzer pin */
+//#define BUZZER 16      /* Buzzer pin, 16 pin on ESP32 not working */
 #define LED 2          /* LED pin (2=built-in LED) */
-#define LED_E D3       // D3 (0),  D4 (GPIO2) /* External LED pin */
+#define LED_E 0       // D3 (0),  D4 (GPIO2) /* External LED pin */
 #define SYNC_NTP 1     /* Sync time with NTP server at startup */
 #define USE_DISPLAY 1  /* Turn on display */
 
 #define GLOBAL_LANG 1                /* Language for display (1 = en, 2 = pl, ...) - more can be added in lang/ folder */
-#define DISPLAY_TYPE 1               /* Display type: 1 = "EPD_154", 2 = "OLED_096", 3 = "miniTV_144" */
+#define DISPLAY_TYPE 3               /* Display type: 1 = "EPD_154", 2 = "OLED_096", 3 = "miniTV_144" */
 #define D_ROTATION 1                 /* Display orientation */
 //#define D_INVERT_COLORS 1          /* Invert display colors */
 #ifdef SYNC_NTP
-#define MY_NTP_SERVER "at.pool.ntp.org"        /* NTP server */
-#define MY_TZ "CET-1CEST,M3.5.0/02,M10.5.0/03" /* Timezone (Central European Time) */
+const char MY_NTP_SERVER[] = "at.pool.ntp.org";        /* NTP server */
+const char MY_TZ[] = "CET-1CEST,M3.5.0/02,M10.5.0/03"; /* Timezone (Central European Time) */
 #endif
 
 #ifdef LED
@@ -29,7 +29,7 @@
 // Channels to scan on (US=1-11, EU=1-13, JAP=1-14)
 const short channels[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 /*,14*/};
 const String spin[] = {"-", "\\", "|", "/"};
-const String faces[] = {"(^v^)", "(o_o)", "(O_o)", "(O_O)", "(o_O)"};
+const String faces[] = {"-(^v^)-", "\\(o_o)/", "=(O_o)=", "/(O_O)\\", "=(o_O)="};
 
 #ifdef BUZZER
 #define SPEED 1.5 /* Song speed, the bigger the number the slower the song */
@@ -42,16 +42,16 @@ const String faces[] = {"(^v^)", "(o_o)", "(O_o)", "(O_O)", "(o_O)"};
 #define AP_NAME "DDDD" /* Access Point name for WiFiManager (DEauthDEtectorDEviceDEbug)*/
 #endif
 const char Title[] = "DeauthDetectorD";
-const char VersionLong[] = "v0.0.4 (20260208)";
-const char VersionShort[] = "v0.0.4d";
+const char VersionLong[] = "v0.0.5 (20260209)";
+const char VersionShort[] = "v0.0.5d";
 #else
 #define SERIAL_BAUD 0 /* Turn off Serial */
 #ifdef SYNC_NTP
 #define AP_NAME "DeDeDe" /* Access Point name for WiFiManager (DEauthDEtectorDEvice)*/
 #endif
 const char Title[] = "DeauthDetector";
-const char VersionLong[] = "v0.0.4";
-const char VersionShort[] = "v0.0.4";
+const char VersionLong[] = "v0.0.5";
+const char VersionShort[] = "v0.0.5";
 #endif
 
 #endif
