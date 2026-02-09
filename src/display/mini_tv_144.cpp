@@ -166,7 +166,7 @@ void display_update(String input, String msg, char spin, int packet_rate, int pa
         sprintf(timeBuffer, "%02d:%02d", old_hour, old_minute);
         tft.getTextBounds((const char *)timeBuffer, 0, 0, &tbx, &tby, &tbw, &tbh);
         x = ((tft.width() - tbw) / 2) - tbx;
-        tft.fillRect(x - 1, 50 - tbh, tbw + 2, tbh + 3, BG_COLOR);
+        tft.fillRect(0, 50 - tbh, tft.width(), tbh + 3, BG_COLOR);
         sprintf(timeBuffer, "%02d:%02d", curHour, curMinute);
         tft.getTextBounds((const char *)timeBuffer, 0, 0, &tbx, &tby, &tbw, &tbh);
         x = ((tft.width() - tbw) / 2) - tbx;
@@ -182,7 +182,7 @@ void display_update(String input, String msg, char spin, int packet_rate, int pa
         sprintf(timeBuffer, "%04d/%02d/%02d", 1900 + old_year, 1 + old_month, old_day);
         tft.getTextBounds((const char *)timeBuffer, 0, 0, &tbx, &tby, &tbw, &tbh);
         x = ((tft.width() - tbw) / 2) - tbx;
-        tft.fillRect(x, 48 + 4, tbw + 4, tbh + 2, BG_COLOR);
+        tft.fillRect(x - 2, 48 + 4, tbw + 6, tbh + 2, BG_COLOR);
         sprintf(timeBuffer, "%04d/%02d/%02d", 1900 + curYear, 1 + curMonth, curDay);
         tft.getTextBounds((const char *)timeBuffer, 0, 0, &tbx, &tby, &tbw, &tbh);
         x = ((tft.width() - tbw) / 2) - tbx;

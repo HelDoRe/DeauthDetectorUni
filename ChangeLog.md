@@ -5,6 +5,7 @@ ADD:
  * MiniTV show time, date, status.
  * Fix total packets counter
  * Oled_096 support (again ;) 
+ * Small fix in display miniTV 
 
 -=# v0.0.4 (20260208) #=- 
 ADD: 
