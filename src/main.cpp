@@ -56,11 +56,17 @@ void setup()
   String msgt;
 
 #ifdef DEBUG_SERIAL
+  delay(1000); // Wait for serial to initialize
   Serial.begin(SERIAL_BAUD); // Start serial communication
+  delay(1000); // Wait for serial to initialize
 #else
   Serial.end(); // End serial communication
 #endif
-delay(500); // Wait for serial to initialize
+
+#ifdef USE_DISPLAY
+  display_init();
+  Serial.println("Display init OK");
+#endif
 
 #ifdef SYNC_NTP
   WiFi.mode(WIFI_STA); // explicitly set mode, esp defaults to STA+AP
@@ -94,7 +100,6 @@ delay(500); // Wait for serial to initialize
 #ifdef DEBUG_SERIAL
   Serial.println();
 #ifdef USE_DISPLAY
-  display_init();
   Serial.println("Display init OK");
 #endif
 #ifdef SYNC_NTP

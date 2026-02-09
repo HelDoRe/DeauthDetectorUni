@@ -25,4 +25,7 @@
    niektore ustawienia - reset to defaults z poziomu web (zastanowic sie czy dac) 
    OTA? 
    w platformio.ini dac tez konfig pinow (i moze reszte co sie da bo rotation i invert wlazlo :) 
+   jak nie ma buzzera i LEDow to moze mrugac przez invert display ? 
+   pomiar jak dlugo na baterii uciagnal (czyli detect czy charging czy nie i zapis co jakis czas uptime) 
+   wykrywanie i pomiar naladowania baterii 
    

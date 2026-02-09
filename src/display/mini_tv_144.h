@@ -6,13 +6,9 @@
 #include <SPI.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_ST7735.h>
-#include <Fonts/FreeMono9pt7b.h>
-#include <Fonts/Org_01.h>
-#include <Fonts/Picopixel.h>
-#include <Fonts/Tiny3x3a2pt7b.h>
-#include <Fonts/TomThumb.h>
+//#include <Fonts/FreeMono9pt7b.h>
 #include <Fonts/FreeMonoBold9pt7b.h>
-#include "fonts/Outfit_80036pt7b.h"
+//#include "fonts/Outfit_80036pt7b.h"
 #include "fonts/Outfit_60011pt7b.h"
 #include "fonts/Font3x7FixedNum.h"
 

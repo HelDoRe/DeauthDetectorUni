@@ -8,7 +8,9 @@
 #define SYNC_NTP 1     /* Sync time with NTP server at startup */
 #define USE_DISPLAY 1  /* Turn on display */
 
+#ifndef GLOBAL_LANG
 #define GLOBAL_LANG 1                /* Language for display (1 = en, 2 = pl, ...) - more can be added in lang/ folder */
+#endif
 #ifndef DISPLAY_TYPE
 #define DISPLAY_TYPE 1               /* Display type: 1 = "EPD_154", 2 = "OLED_096", 3 = "miniTV_144" */
 #endif
