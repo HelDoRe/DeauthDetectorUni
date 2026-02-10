@@ -11,6 +11,9 @@
 #if DISPLAY_TYPE == 3
 #include "display/mini_tv_144.h"
 #endif
+#if DISPLAY_TYPE == 4
+#include "display/mini_oled_042.h"
+#endif
 #endif
 
 #endif

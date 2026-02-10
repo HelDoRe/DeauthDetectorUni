@@ -28,4 +28,4 @@
    jak nie ma buzzera i LEDow to moze mrugac przez invert display ? 
    pomiar jak dlugo na baterii uciagnal (czyli detect czy charging czy nie i zapis co jakis czas uptime) 
    wykrywanie i pomiar naladowania baterii 
-   
+   porzaek z diodami, jedna power, druga breathe, dodatkowe jakby co, ktore piny itp. 

@@ -12,7 +12,7 @@
 #define GLOBAL_LANG 1                /* Language for display (1 = en, 2 = pl, ...) - more can be added in lang/ folder */
 #endif
 #ifndef DISPLAY_TYPE
-#define DISPLAY_TYPE 1               /* Display type: 1 = "EPD_154", 2 = "OLED_096", 3 = "miniTV_144" */
+#define DISPLAY_TYPE 1               /* Display type: 1 = "EPD_154", 2 = "OLED_096", 3 = "miniTV_144", 4 = "miniOLED_042" */
 #endif
 #ifndef D_ROTATION
 #define D_ROTATION 1                 /* Display orientation */
@@ -53,16 +53,16 @@ const String faces[] = {"-(^v^)-", "\\(o_o)/", "=(O_o)=", "/(O_O)\\", "=(o_O)="}
 #define AP_NAME "DDDD" /* Access Point name for WiFiManager (DEauthDEtectorDEviceDEbug)*/
 #endif
 const char Title[] = "DeauthDetectorD";
-const char VersionLong[] = "v0.0.5 (20260209)";
-const char VersionShort[] = "v0.0.5d";
+const char VersionLong[] = "v0.0.6 (20260210)";
+const char VersionShort[] = "v0.0.6d";
 #else
 #define SERIAL_BAUD 0 /* Turn off Serial */
 #ifdef SYNC_NTP
 #define AP_NAME "DeDeDe" /* Access Point name for WiFiManager (DEauthDEtectorDEvice)*/
 #endif
 const char Title[] = "DeauthDetector";
-const char VersionLong[] = "v0.0.5";
-const char VersionShort[] = "v0.0.5";
+const char VersionLong[] = "v0.0.6";
+const char VersionShort[] = "v0.0.6";
 #endif
 
 #endif

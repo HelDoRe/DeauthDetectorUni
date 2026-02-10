@@ -56,9 +56,9 @@ void setup()
   String msgt;
 
 #ifdef DEBUG_SERIAL
-  delay(1000); // Wait for serial to initialize
+  delay(200); // Wait for serial to initialize
   Serial.begin(SERIAL_BAUD); // Start serial communication
-  delay(1000); // Wait for serial to initialize
+  delay(1500); // Wait for serial to initialize
 #else
   Serial.end(); // End serial communication
 #endif
@@ -66,7 +66,10 @@ void setup()
 #ifdef USE_DISPLAY
   display_init();
   Serial.println("Display init OK");
+#if DISPLAY_TYPE == 4 && defined(PLATFORM_ESP32)
+  WiFi.setTxPower(WIFI_POWER_15dBm); //if too much power is used, the sniffer will be less effective, so set it to a lower level
 #endif
+  #endif
 
 #ifdef SYNC_NTP
   WiFi.mode(WIFI_STA); // explicitly set mode, esp defaults to STA+AP
@@ -77,6 +80,8 @@ void setup()
 #endif
 #ifdef PLATFORM_ESP32
   configTime(MY_TZ * 3600, 0,  MY_NTP_SERVER);
+  WiFi.setTxPower(WIFI_POWER_15dBm); //if too much power is used, the sniffer will be less effective, so set it to a lower level
+//  esp_wifi_set_max_tx_power(40); //if too much power is used, the sniffer will be less effective, so set it to a lower level
 #endif
 #endif
 
@@ -117,6 +122,7 @@ void setup()
   Serial.println("Init passed, starting...");
 #endif
 
+#ifdef SYNC_NTP
 #ifdef DEBUG_SERIAL
   Serial.print("Waiting for NTP");
 #endif
@@ -138,7 +144,7 @@ void setup()
   else
     Serial.println("error!");
 #endif
-
+#endif
   WiFi.disconnect();                   // Disconnect from any saved or active WiFi connections
   #ifdef PLATFORM_8266
   wifi_set_opmode(STATION_MODE);       // Set device to client/station mode

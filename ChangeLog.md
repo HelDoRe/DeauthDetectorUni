@@ -1,3 +1,7 @@
+-=# v0.0.6 (20260209) #=- 
+ADD: 
+ * Super micro ESP32-C3 with 0.42" Oled 
+
 -=# v0.0.5 (20260209) #=- 
 ADD: 
  * Multiplatform in .ini 
