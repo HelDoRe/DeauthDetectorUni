@@ -80,7 +80,9 @@ void setup()
 #endif
 #ifdef PLATFORM_ESP32
   configTime(MY_TZ * 3600, 0,  MY_NTP_SERVER);
+  #if DISPLAY_TYPE == 4
   WiFi.setTxPower(WIFI_POWER_15dBm); //if too much power is used, the sniffer will be less effective, so set it to a lower level
+  #endif
 //  esp_wifi_set_max_tx_power(40); //if too much power is used, the sniffer will be less effective, so set it to a lower level
 #endif
 #endif

@@ -1,6 +1,6 @@
 -=# v0.0.6 (20260209) #=- 
 ADD: 
- * Super micro ESP32-C3 with 0.42" Oled 
+ * Super micro ESP32-C3 with 0.42" Oled (remember about WiFi.setTxPower(WIFI_POWER_15dBm) or less, to get WiFi works on ESP32-C3 super mini) 
 
 -=# v0.0.5 (20260209) #=- 
 ADD: 
